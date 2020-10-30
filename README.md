@@ -2,19 +2,19 @@
 
 
 Versions:  
-- Hadoop 2.7.4
+- Hadoop 2.7
 - Hive 2.3.2 (metastore on postgres)
 - Spark 2.4.5 (works with python3.7)
 - Jupyter Notebook with pyspark (spark 2.4.5)
 - OpenJDK 8
 
 For start:  
-0) (optional) Define shared folders for jupyter and/or spark-master services
-1) In new terminal: `cd /path/to/docker-compose/`
-2) Enter `docker-compose up` and wait while services starting
-3) In new terminal enter: `docker ps` and find jupyter container id
-4) Enter `docker exec <jupyter_id> jupyter notebook list` for get notebook url
-5) (optional) Move example.ipynb file to jupyter shared folder and open its in notebook (url from step above)
+1) (optional) Change shared folders for jupyter and/or spark-master services in volumes key
+2) In new terminal: `cd /path/to/docker-compose/`
+3) Enter `docker-compose up` and wait while services starting
+4) In new terminal enter: `docker ps` and find jupyter container id
+5) Enter `docker exec <jupyter_id> jupyter notebook list` for get notebook url
+6) (optional) Move example.ipynb file to jupyter shared folder and open its in notebook (url from step above)
 
 Some details:  
 - For start job on cluster, use `.master('spark://spark-master:7077')` whene create SparkSession
