@@ -1,4 +1,4 @@
-version: '2' 
+version: '2'
 
 services:
   namenode:
@@ -12,10 +12,11 @@ services:
       - ./hadoop-hive.env
     ports:
       - 50070:50070
+      - 8020:8020
   datanode:
     image: bde2020/hadoop-datanode:2.0.0-hadoop2.7.4-java8
     container_name: datanode
-    depends_on: 
+    depends_on:
       - namenode
     volumes:
       - datanode:/hadoop/dfs/data
@@ -73,7 +74,7 @@ services:
       - PYSPARK_DRIVER_PYTHON=python3
       - HADOOP_CONF_DIR=/etc/hadoop/conf
     ports:
-      - "8081:8081"
+      - 8081:8081
     env_file:
       - ./hadoop-hive.env
     volumes:
@@ -81,7 +82,7 @@ services:
       - ./spark_conf/hive:/spark/conf/
 
   jupyter:
-    image: jupyter/pyspark-notebook:dd2087c75645
+    image: jupyter/pyspark-notebook:spark-2
     container_name: jupyter
     env_file:
       - ./hadoop-hive.env
@@ -90,7 +91,7 @@ services:
       - PYSPARK_DRIVER_PYTHON=python3
       - HADOOP_CONF_DIR=/etc/hadoop/conf
     ports:
-      - "8888:8888"
+      - 8888:8888
     depends_on:
       - spark-master
     volumes:
