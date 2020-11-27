@@ -4,8 +4,10 @@ services:
   namenode:
     image: bde2020/hadoop-namenode:2.0.0-hadoop2.7.4-java8
     container_name: namenode
+    restart: on-failure
     volumes:
-      - namenode:/hadoop/dfs/name
+      - hadoop_namenode:/hadoop/dfs/name
+      #- /var/shared/hdfs:/shared/  # replace first item by your shared folder for namenode files
     environment:
       - CLUSTER_NAME=test
     env_file:
@@ -16,10 +18,11 @@ services:
   datanode:
     image: bde2020/hadoop-datanode:2.0.0-hadoop2.7.4-java8
     container_name: datanode
+    restart: on-failure
     depends_on:
       - namenode
     volumes:
-      - datanode:/hadoop/dfs/data
+      - hadoop_datanode:/hadoop/dfs/data
     env_file:
       - ./hadoop-hive.env
     ports:
@@ -28,6 +31,7 @@ services:
   hive-server:
     image: bde2020/hive:2.3.2-postgresql-metastore
     container_name: hive-server
+    restart: on-failure
     env_file:
       - ./hadoop-hive.env
     environment:
@@ -37,6 +41,7 @@ services:
   hive-metastore:
     image: bde2020/hive:2.3.2-postgresql-metastore
     container_name: hive-metastore
+    restart: on-failure
     env_file:
       - ./hadoop-hive.env
     command: /opt/hive/bin/hive --service metastore
@@ -44,10 +49,12 @@ services:
       - 9083:9083
   hive-metastore-postgresql:
     image: bde2020/hive-metastore-postgresql:2.3.0
+    restart: on-failure
 
   spark-master:
     image: bde2020/spark-master:2.4.5-hadoop2.7
     container_name: spark-master
+    restart: on-failure
     ports:
       - 8080:8080
       - 7077:7077
@@ -60,12 +67,13 @@ services:
       - PYSPARK_DRIVER_PYTHON=python3
       - HADOOP_CONF_DIR=/etc/hadoop/conf
     volumes:
-      # - /home/wtcrow/shared/spark:/shared/  # replace first item by your shared folder for spark files
+      #- /var/shared/spark:/shared/  # replace first item by your shared folder for spark files
       - ./spark_conf/hadoop:/etc/hadoop/conf/
       - ./spark_conf/hive:/spark/conf/
   spark-worker:
     image: bde2020/spark-worker:2.4.5-hadoop2.7
     container_name: spark-worker
+    restart: on-failure
     depends_on:
       - spark-master
     environment:
@@ -84,6 +92,7 @@ services:
   jupyter:
     image: jupyter/pyspark-notebook:spark-2
     container_name: jupyter
+    restart: on-failure
     env_file:
       - ./hadoop-hive.env
     environment:
@@ -97,9 +106,9 @@ services:
     volumes:
       - ./spark_conf/hadoop:/etc/hadoop/conf/
       - ./spark_conf/hive:/usr/local/spark/conf
-      # - /home/wtcrow/shared/jupyter:/home/jovyan/work  # replace first item by your shared folder for jupyter files
+      #- /var/shared/jupyter:/home/jovyan/work  # replace first item by your shared folder for jupyter files
     working_dir: /home/jovyan/work
 
 volumes:
-  namenode:
-  datanode:
+  hadoop_namenode:
+  hadoop_datanode:
